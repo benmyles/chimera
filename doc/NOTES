@@ -1,0 +1,11 @@
+require 'lib/chimera'
+Chimera.config_path = "doc/examples/config.yml"
+require 'test/models'
+c = Car.new
+c.make = "Nissan"
+c.model = "RX7"
+c.year = 2010
+c.sku = 1001
+c.comments = "really fast car. it's purple too!"
+c.id = Car.new_uuid
+c.save

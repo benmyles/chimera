@@ -1,0 +1,16 @@
+:default:
+  :redis:
+    :host: 127.0.0.1
+    :port: 6379
+    :db: 0
+  :riak_raw:
+    :host: 127.0.0.1
+    :port: 8098
+:user:
+  :redis:
+    :host: 127.0.0.1
+    :port: 5379
+    :db: 0
+  :riak_raw:
+    :host: 127.0.0.1
+    :port: 7098
