@@ -10,9 +10,8 @@ module Chimera
         @defined_attributes || {}
       end
 
-      # available types include:
-      #   string, integer, yaml, json, coordinate
-      def attribute(name, type = :string, extra_opts={})
+      # available types include: model
+      def attribute(name, type = nil, extra_opts={})
         @defined_attributes ||= {}
         @defined_attributes[name.to_sym] = [type, extra_opts]
         define_method("#{name}") do

@@ -1,12 +1,13 @@
 class User < Chimera::Base
   use_config :default # this is implied even if not here
   
-  attribute :name, :string
-  attribute :age, :integer
-  attribute :occupation, :string
-  attribute :interests, :json
-  attribute :home_coordinate, :coordinate # [37.2,122.1]
-  attribute :ssn, :string
+  attribute :name
+  attribute :age
+  attribute :occupation
+  attribute :interests
+  attribute :home_coordinate # [37.2,122.1]
+  attribute :ssn
+  attribute :updated_at
   attribute :favorite_car, :model, :class => :car
   
   # User.find_with_index(:home_coordinate, {:coordinate => [37.2,122.1], :steps => 5})
@@ -33,11 +34,11 @@ class Car < Chimera::Base
   attribute :color
   attribute :make
   attribute :model
-  attribute :year, :integer
-  attribute :mileage, :integer
+  attribute :year
+  attribute :mileage
   attribute :comments
   attribute :sku
-  attribute :curr_location, :coordinate
+  attribute :curr_location
   
   index :year, :type => :find
   index :comments, :type => :search

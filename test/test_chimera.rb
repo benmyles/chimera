@@ -224,4 +224,15 @@ class TestChimera < Test::Unit::TestCase
     
     assert_equal false, User.connection(:redis).exists(u.num_logins.key)
   end
+  
+  def test_rich_attributes
+    u = User.new
+    u.id = User.new_uuid
+    u.updated_at = Time.now.utc
+    assert u.updated_at.is_a?(Time)
+    u.name = "ben"
+    assert u.save
+    u = User.find(u.id)
+    assert u.updated_at.is_a?(Time)
+  end
 end

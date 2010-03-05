@@ -48,7 +48,7 @@ module Chimera
         @riak_response = self.class.connection(:riak_raw).store(
           self.class.bucket_key,
           self.id, 
-          Yajl::Encoder.encode(@attributes),
+          YAML.dump(@attributes),
           self.vector_clock)
 
         @orig_attributes = @attributes.clone

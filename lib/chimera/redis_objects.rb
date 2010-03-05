@@ -66,6 +66,16 @@ module Chimera
       def destroy
         connection.del(self.key)
       end
+      
+      def encode(val)
+        YAML.dump(val)
+      end
+      
+      def decode(val)
+        return nil if val.nil?
+        return "" if val == ""
+        YAML.load(val)
+      end
     end
     
     class Collection < Base
@@ -86,17 +96,17 @@ module Chimera
     
     class String < Base
       def set(val)
-        connection.set(self.key, val)
+        connection.set(self.key, encode(val))
       end
       
       def get
-        connection.get(self.key)
+        decode(connection.get(self.key))
       end
     end
     
     class Set < Collection
       def add(val)
-        connection.sadd(self.key, val)
+        connection.sadd(self.key, encode(val))
       end
       
       def <<(val)
@@ -104,15 +114,15 @@ module Chimera
       end
       
       def rem(val)
-        connection.srem(self.key, val)
+        connection.srem(self.key, encode(val))
       end
       
       def pop
-        connection.spop(self.key)
+        decode connection.spop(self.key)
       end
       
       def move(val, dest_set_key)
-        connection.smove(self.key, dest_set_key, val)
+        connection.smove(self.key, dest_set_key, encode(val))
       end
       
       def card
@@ -123,7 +133,7 @@ module Chimera
       alias :count :card
       
       def ismember(val)
-        connection.sismember(self.key, val)
+        connection.sismember(self.key, encode(val))
       end
       
       alias :is_member? :ismember
@@ -132,7 +142,7 @@ module Chimera
       alias :contains? :ismember
       
       def inter(*set_keys)
-        connection.sinter(set_keys.join(" "))
+        (connection.sinter(set_keys.join(" ")) || []).collect { |val| decode(val) }
       end
       
       alias :intersect :inter
@@ -144,7 +154,7 @@ module Chimera
       alias :intersect_and_store :interstore
       
       def union(*set_keys)
-        connection.sunion(set_keys.join(" "))
+        (connection.sunion(set_keys.join(" ")) || []).collect { |val| decode(val) }
       end
       
       def unionstore(dest_key, *set_keys)
@@ -154,7 +164,7 @@ module Chimera
       alias :union_and_store :unionstore
       
       def diff(*set_keys)
-        connection.sdiff(set_keys.join(" "))
+        (connection.sdiff(set_keys.join(" ")) || []).collect { |val| decode(val) }
       end
       
       def diffstore(dest_key, *set_keys)
@@ -164,13 +174,13 @@ module Chimera
       alias :diff_and_store :diffstore
       
       def members
-        connection.smembers(self.key)
+        (connection.smembers(self.key) || []).collect { |val| decode(val) }
       end
       
       alias :all :members
       
       def randmember
-        connection.srandmember(self.key)
+        decode connection.srandmember(self.key)
       end
       
       alias :rand_member :randmember
@@ -178,67 +188,67 @@ module Chimera
     
     class ZSet < Collection
       def add(val,score=0)
-        connection.zadd(self.key, score, val)
+        connection.zadd(self.key, score, encode(val))
       end
       
       def rem(val)
-        connection.zrem(self.key, val)
+        connection.zrem(self.key, encode(val))
       end
       
       def incrby(val, incr)
-        connection.zincrby(self.key, incr, val)
+        connection.zincrby(self.key, incr.to_f, encode(val))
       end
       
       alias :incr_by :incrby
       
       def range(start_index, end_index, extra_opts={})
-        opts = [self.key, start_index, end_index]
+        opts = [self.key, start_index.to_i, end_index.to_i]
         opts << "WITHSCORES" if extra_opts[:with_scores] == true
-        connection.zrange(opts)
+        (connection.zrange(opts) || []).collect { |val| decode(val) }
       end
       
       def revrange(start_index, end_index, extra_opts={})
-        opts = [self.key, start_index, end_index]
+        opts = [self.key, start_index.to_i, end_index.to_i]
         opts << "WITHSCORES" if extra_opts[:with_scores] == true
-        connection.zrevrange(opts)
+        (connection.zrevrange(opts) || []).collect { |val| decode(val) }
       end
       
       alias :rev_range :revrange
       
       def rangebyscore(min, max, extra_opts={})
-        opts = [self.key, min, max]
+        opts = [self.key, min.to_f, max.to_f]
         offset, count = extra_opts[:limit]
         if offset and count
           opts << "LIMIT #{offset} #{count}"
         end
         opts << "WITHSCORES" if extra_opts[:with_scores] == true
-        connection.zrangebyscore(opts)
+        (connection.zrangebyscore(opts) || []).collect { |val| decode(val) }
       end
       
       alias :range_by_score :rangebyscore
       
       def remrangebyscore(min,max)
-        connection.zremrangebyscore(self.key,min,max)
+        connection.zremrangebyscore(self.key,min.to_f,max.to_f)
       end
       
       alias :rem_range_by_score :remrangebyscore
       alias :remove_range_by_score :remrangebyscore
       
       def card
-        connection.zcard(self.key)
+        connection.zcard(self.key).to_i
       end
       
       alias :size :card
       alias :count :card
       
       def score(val)
-        connection.zscore(self.key, val)
+        connection.zscore(self.key, val).to_f
       end
     end
     
     class List < Collection
       def rpush(val)
-        connection.rpush(self.key, val)
+        connection.rpush(self.key, encode(val))
       end
       
       alias :right_push :rpush
@@ -248,28 +258,28 @@ module Chimera
       end
       
       def lpush(val)
-        connection.lpush(self.key, val)
+        connection.lpush(self.key, encode(val))
       end
       
       alias :left_push :lpush
       
       def len
-        connection.len(self.key)
+        connection.len(self.key).to_i
       end
       
       alias :size :len
       alias :count :len
       
       def range(start_index, end_index)
-        connection.lrange(self.key, start_index, end_index)
+        (connection.lrange(self.key, start_index.to_i, end_index.to_i) || []).collect { |val| decode(val) }
       end
       
       def trim(start_index, end_index)
-        connection.ltrim(self.key, start_index, end_index)
+        connection.ltrim(self.key, start_index.to_i, end_index.to_i)
       end
       
       def index(index)
-        connection.lindex(self.key, index)
+        decode connection.lindex(self.key, index.to_i)
       end
       
       def [](index)
@@ -277,28 +287,28 @@ module Chimera
       end
       
       def set(index, val)
-        connection.lset(self.key, index, val)
+        connection.lset(self.key, index.to_i, encode(val))
       end
       
       def rem(val, count=0)
-        connection.lrem(self.key, count, val)
+        connection.lrem(self.key, count.to_i, encode(val))
       end
       
       def lpop
-        connection.lpop(self.key)
+        decode connection.lpop(self.key)
       end
       
       alias :left_pop :lpop
       alias :pop :lpop
       
       def rpop
-        connection.rpop(self.key)
+        decode connection.rpop(self.key)
       end
       
       alias :right_pop :rpop
       
       def rpoplpush(dest_key)
-        connection.rpoplpush(self.key, dest_key)
+        decode connection.rpoplpush(self.key, dest_key)
       end
       
       alias :right_pop_left_push :rpoplpush
@@ -306,21 +316,21 @@ module Chimera
     
     class Counter < Base      
       def incr
-        connection.incr(self.key)
+        connection.incr(self.key).to_i
       end
       
       def incrby(val)
-        connection.incrby(self.key,val)
+        connection.incrby(self.key,val.to_i).to_i
       end
       
       alias :incr_by :incrby
       
       def decr
-        connection.decr(self.key)
+        connection.decr(self.key).to_i
       end
       
       def decrby(val)
-        connection.decrby(self.key, val)
+        connection.decrby(self.key, val.to_i).to_i
       end
       
       def val

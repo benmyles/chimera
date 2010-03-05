@@ -11,6 +11,7 @@ require 'fast_stemmer'
 require 'digest/sha1'
 require 'uuidtools'
 require 'yajl'
+require 'yaml'
 require 'active_model'
 
 require 'redis'

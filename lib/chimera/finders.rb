@@ -23,9 +23,9 @@ module Chimera
             if key
               resp = self.connection(:riak_raw).fetch(self.to_s, key)
               if resp.code == 200
-                if resp.body and json_hash = Yajl::Parser.parse(resp.body)
+                if resp.body and yaml_hash = YAML.load(resp.body)
                   hash = {}
-                  json_hash.each { |k,v| hash[k.to_sym] = v }
+                  yaml_hash.each { |k,v| hash[k.to_sym] = v }
                   obj = self.new(hash,key,false)
                   obj.riak_response = resp
                   found << obj
