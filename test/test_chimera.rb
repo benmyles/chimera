@@ -134,4 +134,94 @@ class TestChimera < Test::Unit::TestCase
     Car.each { |car| count += 1 }
     assert_equal 2, count
   end
+  
+  def test_associations
+    u = User.new
+    u.id = User.new_uuid
+    u.name = "Ben"
+    assert u.save
+    
+    assert_equal 0, u.friends.size
+    
+    chris = User.new
+    chris.id = User.new_uuid
+    chris.name = "Chris"
+    assert chris.save
+    
+    assert_equal 0, u.friends.size
+    u.friends << chris
+    assert_equal 1, u.friends.size
+    chris.destroy
+    assert_equal 0, u.friends.size
+    
+    c = Car.new
+    c.make = "Nissan"
+    c.model = "RX7"
+    c.year = 2010
+    c.sku = 1001
+    c.comments = "really fast car. it's purple too!"
+    c.id = Car.new_uuid
+    assert c.save
+    
+    assert_equal 0, u.cars.size
+    u.cars << c
+    assert_equal 1, u.cars.size
+    assert_equal [c], u.cars.all
+    assert_equal 1, c.association_memberships.all_associations.size
+    u.cars.remove(c)
+    assert_equal 0, c.association_memberships.all_associations.size
+  end
+  
+  def test_model_attribute
+    u = User.new
+    u.id = User.new_uuid
+    u.name = "Ben"
+    assert u.save
+    assert_nil u.favorite_car
+    
+    c = Car.new
+    c.make = "Nissan"
+    c.model = "RX7"
+    c.year = 2010
+    c.sku = 1001
+    c.comments = "really fast car. it's purple too!"
+    c.id = Car.new_uuid
+    assert c.save
+    
+    u.favorite_car = c
+    assert u.save
+    assert_equal c, u.favorite_car
+    u = User.find(u.id)
+    assert_equal c, u.favorite_car
+    u.favorite_car = nil
+    assert u.save
+    assert_nil u.favorite_car
+    
+    u.favorite_car = c
+    assert u.save
+    assert_equal c, u.favorite_car
+    c.destroy
+    assert_equal c, u.favorite_car
+    u = User.find(u.id)
+    assert_nil u.favorite_car
+  end
+  
+  def test_redis_objects
+    u = User.new
+    u.id = User.new_uuid
+    u.name = "Ben"
+    assert u.save
+    
+    assert_equal false, User.connection(:redis).exists(u.num_logins.key)
+    assert_equal 0, u.num_logins.count
+    u.num_logins.incr
+    assert_equal 1, u.num_logins.count
+    assert_equal true, User.connection(:redis).exists(u.num_logins.key)
+    u.num_logins.incr_by 10
+    assert_equal 11, u.num_logins.count
+    
+    u.destroy
+    
+    assert_equal false, User.connection(:redis).exists(u.num_logins.key)
+  end
 end

@@ -19,13 +19,7 @@ module RiakRaw
   
   class Client
     attr_accessor :host, :port, :prefix, :client_id
-    
-    def self.extract_header(headers, target_header)
-      headers.split("\r\n").select { |header| header =~ /^#{target_header}/ }[0].split(": ")[1]
-    rescue => e
-      nil
-    end
-    
+        
     def initialize(host="127.0.0.1", port=8098, prefix='riak', client_id=SecureRandom.base64)
       @host = host
       @port = port

@@ -12,6 +12,8 @@ module Chimera
     include Chimera::Attributes
     include Chimera::Indexes
     include Chimera::GeoIndexes
+    include Chimera::Associations
+    include Chimera::RedisObjects
     include Chimera::Finders
     include Chimera::Persistence
     include ActiveModel::Validations
@@ -20,7 +22,7 @@ module Chimera
     extend ActiveModel::Callbacks
     define_model_callbacks :create, :save, :destroy
     
-    attr_accessor :id, :attributes, :orig_attributes, :riak_response
+    attr_accessor :id, :attributes, :orig_attributes, :riak_response, :associations
     
     def self.use_config(key)
       @config = (Chimera.config[key.to_sym] || raise(Chimera::Error::MissingConfig,":#{key}"))
@@ -74,6 +76,14 @@ module Chimera
       @orig_attributes = @attributes.clone
       @id = id
       @new = is_new
+    end
+    
+    def id=(val)
+      if self.new?
+        @id = val
+      else
+        raise(Chimera::Error::AttemptToModifyId)
+      end
     end
     
     protected

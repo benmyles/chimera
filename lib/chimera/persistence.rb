@@ -59,6 +59,9 @@ module Chimera
         _run_destroy_callbacks do
           @riak_response = self.class.connection(:riak_raw).delete(self.class.bucket_key, self.id)
           destroy_indexes
+          association_memberships.destroy
+          destroy_associations
+          destroy_redis_objects
           freeze
         end
       end
