@@ -31,43 +31,43 @@ way with one Redis server (especially if you use the new Redis VM).
 
 == SYNOPSIS:
 
-	require "rubygems"
-	gem "chimera", "0.0.1"
-	require "chimera"
+  require "rubygems"
+  gem "chimera", "0.0.1"
+  require "chimera"
 
-	Chimera.config_path = "path/to/your/config.yml"
+  Chimera.config_path = "path/to/your/config.yml"
 
-	class Car < Chimera::Base
-	  attribute :vin
-	  attribute :make
-	  attribute :model
-	  attribute :year
-	  attribute :description
+  class Car < Chimera::Base
+    attribute :vin
+    attribute :make
+    attribute :model
+    attribute :year
+    attribute :description
 
-	  index :year, :type => :find
-	  index :description, :type => :search
-	  index :vin, :type => :unique
+    index :year, :type => :find
+    index :description, :type => :search
+    index :vin, :type => :unique
 
-	  validates_presence_of :vin, :make, :model, :year
-	end
+    validates_presence_of :vin, :make, :model, :year
+  end
 
-	c = Car.new
-	c.id = Car.new_uuid
-	c.vin = 12345
-	c.make = "Pagani"
-	c.model = "Zonda Cinque Roadster"
-	c.year = 2010
-	c.description = "The Roadster will have specs as the Cinque Coupé, and will likely maintain the same rigidity or more, as it was for the Roadster F and F Coupé."
-	c.save
+  c = Car.new
+  c.id = Car.new_uuid
+  c.vin = 12345
+  c.make = "Pagani"
+  c.model = "Zonda Cinque Roadster"
+  c.year = 2010
+  c.description = "The Roadster will have specs as the Cinque Coupé, and will likely maintain the same rigidity or more, as it was for the Roadster F and F Coupé."
+  c.save
 
-	Car.find_with_index(:year, 2010)
-	=> [c]
+  Car.find_with_index(:year, 2010)
+  => [c]
 
-	Car.find_with_index(:description, "rigid boat", :type => :union)
-	=> [c]
+  Car.find_with_index(:description, "rigid boat", :type => :union)
+  => [c]
 
-	Car.find_with_index(:description, "rigid boat", :type => :intersect)
-	=> []
+  Car.find_with_index(:description, "rigid boat", :type => :intersect)
+  => []
 
 * See tests for more usage examples
 
@@ -84,8 +84,8 @@ way with one Redis server (especially if you use the new Redis VM).
 
 == INSTALL:
 
-	$ gem install tzinfo builder memcache-client rack rack-test rack-mount erubis mail text-format thor bundler i18n
-	$ gem install rails --pre
+  $ gem install tzinfo builder memcache-client rack rack-test rack-mount erubis mail text-format thor bundler i18n
+  $ gem install rails --pre
   $ gem install chimera
 
 == LICENSE:
