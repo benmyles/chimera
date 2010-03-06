@@ -70,7 +70,7 @@ way with one Redis server (especially if you use the new Redis VM).
   Car.find_with_index(:description, :q => "rigid boat", :type => :union)
   => [c]
 
-  ar.find_with_index(:description, :q => "rigid boat", :type => :intersect)
+  Car.find_with_index(:description, :q => "rigid boat", :type => :intersect)
   => []
 
 * See tests for more usage examples
