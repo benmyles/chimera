@@ -15,6 +15,7 @@ only being used for key storage and basic data elements you should be able to go
 way with one Redis server (especially if you use the new Redis VM).
 
 !! Chimera is alpha. It's not production tested and needs a better test suite. !!
+!! It's also only tested in Ruby 1.9. !!
 
 == FEATURES:
 
@@ -23,10 +24,12 @@ way with one Redis server (especially if you use the new Redis VM).
 * Supports unique and non-unique indexes, as well as basic search indexes (words are stemmed,
   uses set intersection so you can get an AND/OR search).
 * Supports a geospatial index type for simple storage and lookup of coordinates.
+* Uses Typhoeus for communicating with Riak.
 
 == ISSUES/NOTES:
 
 * Experimental. Not yet tested in production environment, use at your own risk.
+* Only tested with Ruby 1.9. Why not upgrade?
 * Test coverage needs to be improved.
 * Documentation is lacking. At the moment reading the tests and sample test/models.rb
   file are your best bet.
@@ -64,10 +67,10 @@ way with one Redis server (especially if you use the new Redis VM).
   Car.find_with_index(:year, 2010)
   => [c]
 
-  Car.find_with_index(:description, "rigid boat", :type => :union)
+  Car.find_with_index(:description, :q => "rigid boat", :type => :union)
   => [c]
 
-  Car.find_with_index(:description, "rigid boat", :type => :intersect)
+  ar.find_with_index(:description, :q => "rigid boat", :type => :intersect)
   => []
 
 * See tests for more usage examples
