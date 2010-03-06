@@ -96,10 +96,9 @@ way with one Redis server (especially if you use the new Redis VM).
   
 == USEFUL LINKS:
 
-* http://groups.google.com/group/chimera-lib
-
-Email: ben dot myles at gmail dot com
-Twitter: benmyles
+* Discussion: http://groups.google.com/group/chimera-lib
+* Email: ben dot myles at gmail dot com
+* Twitter: benmyles
 
 == LICENSE:
 
