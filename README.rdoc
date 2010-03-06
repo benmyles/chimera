@@ -77,8 +77,8 @@ way with one Redis server (especially if you use the new Redis VM).
 * Redis Server
 
 * ActiveSupport+ActiveModel 3.0.0.beta
-$ gem install tzinfo builder memcache-client rack rack-test rack-mount erubis mail text-format thor bundler i18n
-$ gem install rails --pre
+  $ gem install tzinfo builder memcache-client rack rack-test rack-mount erubis mail text-format thor bundler i18n
+  $ gem install rails --pre
 
 * uuidtools 2.1.1
 * brianmario-yajl-ruby 0.6.3
@@ -86,7 +86,7 @@ $ gem install rails --pre
 
 == INSTALL:
 
-* gem install chimera
+  $ gem install chimera
 
 == LICENSE:
 
