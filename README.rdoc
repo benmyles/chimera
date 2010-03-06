@@ -4,25 +4,89 @@
 
 == DESCRIPTION:
 
-FIX (describe your package)
+Chimera is an object mapper for Riak and Redis. The idea is to mix the advantages of Riak
+(scalability, massive data storage) with Redis (atomicity, performance, data structures).
+You should store the bulk of your data in Riak, and then use Redis data structures where
+appropriate (for example, a counter or set of keys).
 
-== FEATURES/PROBLEMS:
+Internally, Chimera uses Redis for any indexes you define as well as some default indexes
+that are automatically created. There's no built in sharding for Redis, but since it's
+only being used for key storage and basic data elements you should be able to go a long
+way with one Redis server (especially if you use the new Redis VM).
 
-* FIX (list of features or problems)
+== FEATURES:
+
+* Uses Riak (http://riak.basho.com/) for your primary storage.
+* Uses Redis for indexes and also allows you to define Redis objects on a model.
+* Supports unique and non-unique indexes, as well as basic search indexes (words are stemmed,
+  uses set intersection so you can get an AND/OR search).
+* Supports a geospatial index type for simple storage and lookup of coordinates.
+
+== ISSUES/NOTES:
+
+* Experimental. Not yet tested in production environment, use at your own risk.
+* Test coverage needs to be improved.
+* Documentation is lacking. At the moment reading the tests and sample test/models.rb
+  file are your best bet.
 
 == SYNOPSIS:
 
-  FIX (code sample of usage)
+require "rubygems"
+gem "chimera", "0.0.1"
+require "chimera"
+
+Chimera.config_path = "path/to/your/config.yml"
+
+class Car < Chimera::Base
+  attribute :vin
+  attribute :make
+  attribute :model
+  attribute :year
+  attribute :description
+
+  index :year, :type => :find
+  index :description, :type => :search
+  index :vin, :type => :unique
+
+  validates_presence_of :vin, :make, :model, :year
+end
+
+c = Car.new
+c.id = Car.new_uuid
+c.vin = 12345
+c.make = "Pagani"
+c.model = "Zonda Cinque Roadster"
+c.year = 2010
+c.description = "The Roadster will have specs as the Cinque Coupé, and will likely maintain the same rigidity or more, as it was for the Roadster F and F Coupé."
+c.save
+
+Car.find_with_index(:year, 2010)
+=> [c]
+
+Car.find_with_index(:description, "rigid boat", :type => :union)
+=> [c]
+
+Car.find_with_index(:description, "rigid boat", :type => :intersect)
+=> []
+
+* See tests for more usage examples
 
 == REQUIREMENTS:
 
-* Riak
-* Redis
-* Xapian
+* Riak Server
+* Redis Server
+
+* ActiveSupport+ActiveModel 3.0.0.beta
+$ gem install tzinfo builder memcache-client rack rack-test rack-mount erubis mail text-format thor bundler i18n
+$ gem install rails --pre
+
+* uuidtools 2.1.1
+* brianmario-yajl-ruby 0.6.3
+* fast-stemmer 1.0.0
 
 == INSTALL:
 
-* FIX (sudo gem install, anything else)
+* gem install chimera
 
 == LICENSE:
 
