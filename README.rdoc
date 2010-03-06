@@ -14,6 +14,8 @@ that are automatically created. There's no built in sharding for Redis, but sinc
 only being used for key storage and basic data elements you should be able to go a long
 way with one Redis server (especially if you use the new Redis VM).
 
+!! Chimera is alpha. It's not production tested and needs a better test suite. !!
+
 == FEATURES:
 
 * Uses Riak (http://riak.basho.com/) for your primary storage.
