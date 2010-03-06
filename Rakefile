@@ -18,7 +18,7 @@ $hoe = Hoe.spec 'chimera' do
   self.extra_deps = [["activesupport","= 3.0.0.beta"],
     ["uuidtools","= 2.1.1"],
     ["activemodel",'= 3.0.0.beta'],
-    ["brianmario-yajl-ruby","= 0.6.3"],
+    ["yajl-ruby","= 0.7.4"],
     ["fast-stemmer", "= 1.0.0"]]
 end
 

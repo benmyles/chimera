@@ -79,7 +79,7 @@ way with one Redis server (especially if you use the new Redis VM).
 * ActiveSupport+ActiveModel 3.0.0.beta
 
 * uuidtools 2.1.1
-* brianmario-yajl-ruby 0.6.3
+* yajl-ruby 0.7.4
 * fast-stemmer 1.0.0
 
 == INSTALL:
