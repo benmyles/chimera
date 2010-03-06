@@ -32,7 +32,7 @@ way with one Redis server (especially if you use the new Redis VM).
 == SYNOPSIS:
 
   require "rubygems"
-  gem "chimera", "0.0.1"
+  gem "chimera", "0.0.2"
   require "chimera"
 
   Chimera.config_path = "path/to/your/config.yml"
