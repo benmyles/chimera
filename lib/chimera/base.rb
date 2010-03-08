@@ -60,6 +60,10 @@ module Chimera
       UUIDTools::UUID.random_create.to_s
     end
     
+    def self.destroy_all
+      self.each { |o| o.destroy }
+    end
+    
     def inspect
       "#<#{self.to_s}: @id=#{self.id}, @new=#{@new}>"
     end
