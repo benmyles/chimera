@@ -7,6 +7,8 @@ module Chimera
     class ValidationErrors < Chimera::Error; end
     class AttemptToModifyId < Chimera::Error; end
     class AssociationClassMismatch < Chimera::Error; end
+    class UnhandledRiakResponseCode < Chimera::Error; end
+    class CannotSaveWithConflicts < Chimera::Error; end
   end
 end
 

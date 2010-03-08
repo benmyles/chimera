@@ -22,7 +22,8 @@ module Chimera
     extend ActiveModel::Callbacks
     define_model_callbacks :create, :save, :destroy
     
-    attr_accessor :id, :attributes, :orig_attributes, :riak_response, :associations
+    attr_accessor :id, :attributes, :orig_attributes, :riak_response, :associations,
+                  :sibling_attributes
     
     def self.use_config(key)
       @config = (Chimera.config[key.to_sym] || raise(Chimera::Error::MissingConfig,":#{key}"))
@@ -33,15 +34,17 @@ module Chimera
     end
     
     def self.connection(server)
-      Thread.current["Chimera::#{self.to_s}::#{server}::connection"] ||= begin
-        case server.to_sym
-        when :redis
-          Redis.new(self.config[:redis])
-        when :riak_raw
-          RiakRaw::Client.new(self.config[:riak_raw][:host], self.config[:riak_raw][:port])
-        else
-          nil
-        end
+      Thread.current["Chimera::#{self.to_s}::#{server}::connection"] ||= new_connection(server)
+    end
+    
+    def self.new_connection(server)
+      case server.to_sym
+      when :redis
+        Redis.new(self.config[:redis])
+      when :riak_raw
+        RiakRaw::Client.new(self.config[:riak_raw][:host], self.config[:riak_raw][:port])
+      else
+        nil
       end
     end
 
@@ -76,6 +79,7 @@ module Chimera
       @orig_attributes = @attributes.clone
       @id = id
       @new = is_new
+      @sibling_attributes = nil
     end
     
     def id=(val)

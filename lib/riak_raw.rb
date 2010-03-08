@@ -40,6 +40,12 @@ module RiakRaw
       end; nil
     end
     
+    def set_bucket_properties(name,props)
+      response = request(:put,
+        build_path(name),
+        Yajl::Encoder.encode(props), { 'Content-Type' => 'application/json' })
+    end
+    
     def store(bucket_name, key, content, vclock=nil, links=[], content_type='application/json', w=2, dw=2, r=2)
       headers = { 'Content-Type' => content_type,
                   'X-Riak-ClientId' => self.client_id }
@@ -55,16 +61,19 @@ module RiakRaw
       # returnbody=true could cause issues. instead we'll do a
       # separate fetch. see: https://issues.basho.com/show_bug.cgi?id=52
       if response.code == 204
-        response = fetch(bucket_name, key, r)
+        response = fetch(bucket_name, key, {:r => r})
       end
       
       response
     end
     
-    def fetch(bucket_name, key, r=2)
+    def fetch(bucket_name, key, _params={})
+      params = {}
+      _params.each { |k,v| params[k.to_s] = v }
+      params["r"] ||= 2
       response = request(:get,
         build_path(bucket_name, key),
-        nil, {}, {"r" => r})
+        nil, {}, params)
     end
     
     # there could be concurrency issues if we don't force a short sleep
