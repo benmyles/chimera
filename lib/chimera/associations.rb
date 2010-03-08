@@ -118,11 +118,13 @@ module Chimera
         self.model.class.connection(:redis).llen(self.key)
       end
 
-      def each
+      def each(limit=nil)
         llen  = self.model.class.connection(:redis).llen(self.key)
+        limit ||= llen
         curr  = 0
-        while(curr < llen)
-          keys = self.model.class.connection(:redis).lrange(self.key, curr, curr+9).compact
+        while(curr < limit)
+          max_index = [curr+9,limit-1].min
+          keys = self.model.class.connection(:redis).lrange(self.key, curr, max_index).compact
           self.klass.find_many(keys).each { |obj| yield(obj) }
           curr += 10
         end

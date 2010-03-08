@@ -5,6 +5,7 @@ gem 'uuidtools','= 2.1.1'
 gem 'activemodel','= 3.0.0.beta'
 gem "yajl-ruby", "= 0.7.4"
 gem "fast-stemmer", "= 1.0.0"
+gem "typhoeus", "= 0.1.22"
 
 require 'fast_stemmer'
 

@@ -19,7 +19,8 @@ $hoe = Hoe.spec 'chimera' do
     ["uuidtools","= 2.1.1"],
     ["activemodel",'= 3.0.0.beta'],
     ["yajl-ruby","= 0.7.4"],
-    ["fast-stemmer", "= 1.0.0"]]
+    ["fast-stemmer", "= 1.0.0"],
+    ["typhoeus", "= 0.1.22"]]
 end
 
 require 'newgem/tasks'
