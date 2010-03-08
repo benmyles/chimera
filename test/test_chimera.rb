@@ -274,4 +274,26 @@ class TestChimera < Test::Unit::TestCase
     assert !c.in_conflict?
     assert_equal 2006, c.year
   end
+  
+  def test_limits_on_associations
+    u = User.new
+    u.id = User.new_uuid
+    u.name = "Ben"
+    assert u.save
+    
+    1.upto(33) do |i|
+      c = Car.new
+      c.id = Car.new_uuid
+      c.make = "Nissan #{i}"
+      c.model = "Versa #{i}"
+      c.year = 2009
+      assert c.save
+      u.cars << c
+    end
+    
+    assert_equal 33, u.cars.all.size
+    assert_equal 25, u.cars.all(0,25).size
+    assert_equal 7, u.cars.all(10,17).size
+    assert_equal 1, u.cars.all(0,1).size
+  end
 end

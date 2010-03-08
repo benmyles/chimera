@@ -118,10 +118,10 @@ module Chimera
         self.model.class.connection(:redis).llen(self.key)
       end
 
-      def each(limit=nil)
+      def each(offset=0, limit=nil)
         llen  = self.model.class.connection(:redis).llen(self.key)
         limit ||= llen
-        curr  = 0
+        curr  = offset
         while(curr < limit)
           max_index = [curr+9,limit-1].min
           keys = self.model.class.connection(:redis).lrange(self.key, curr, max_index).compact
@@ -131,8 +131,8 @@ module Chimera
         true
       end
       
-      def all
-        found = []; self.each { |o| found << o }; found
+      def all(offset=0, limit=nil)
+        found = []; self.each(offset,limit) { |o| found << o }; found
       end
 
       def destroy(delete_associated=true)
