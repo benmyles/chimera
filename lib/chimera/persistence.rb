@@ -114,8 +114,8 @@ module Chimera
       
       def verify_can_save!
         raise(Chimera::Error::SaveWithoutId) unless self.id
-        raise(Chimera::Error::ValidationErrors) unless self.valid?
         raise(Chimera::Error::CannotSaveWithConflicts) if self.in_conflict?
+        raise(Chimera::Error::ValidationErrors) unless self.valid?
       end
     end # InstanceMethods
   end

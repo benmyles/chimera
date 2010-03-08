@@ -237,6 +237,7 @@ class TestChimera < Test::Unit::TestCase
     assert u.updated_at.is_a?(Time)
   end
   
+  # see http://blog.basho.com/2010/01/29/why-vector-clocks-are-easy/
   def test_conflicts
     Car.connection(:riak_raw).client_id = "Client1"
     c = Car.new
@@ -261,8 +262,7 @@ class TestChimera < Test::Unit::TestCase
     assert_raise(Chimera::Error::CannotSaveWithConflicts) { c.save }
     
     c2 = Car.find(c.id)
-    #puts c2.attributes.inspect
-    #puts c2.sibling_attributes.inspect
+    assert_raise(Chimera::Error::CannotSaveWithConflicts) { c2.save }
     
     c.attributes = c.sibling_attributes.first[1].dup
     c.year = 2006
@@ -273,58 +273,5 @@ class TestChimera < Test::Unit::TestCase
     c = Car.find(c.id)
     assert !c.in_conflict?
     assert_equal 2006, c.year
-  end
-  
-  # test based on http://blog.basho.com/2010/01/29/why-vector-clocks-are-easy/
-  def test_riak_siblings
-    Chimera::Base.connection(:riak_raw).delete("plans","dinner")
-    props = Chimera::Base.connection(:riak_raw).bucket("plans")
-    props["props"]["allow_mult"] = true
-    Chimera::Base.connection(:riak_raw).set_bucket_properties("plans",props)
-    props = Chimera::Base.connection(:riak_raw).bucket("plans")
-    
-    alice_client = Chimera::Base.new_connection(:riak_raw)
-    alice_client.client_id = "Alice"
-  
-    ben_client = Chimera::Base.new_connection(:riak_raw)
-    ben_client.client_id = "Ben"
-  
-    kathy_client = Chimera::Base.new_connection(:riak_raw)
-    kathy_client.client_id = "Kathy"
-  
-    dave_client = Chimera::Base.new_connection(:riak_raw)
-    dave_client.client_id = "Dave"
-    
-    alice_resp = alice_client.store("plans","dinner","Wednesday")
-    
-    # When Ben, Kathy, and Dave each GET Alice's plans, they'll get the same vector clock 
-    ben_resp = ben_client.fetch("plans","dinner")
-    kathy_resp = kathy_client.fetch("plans","dinner")
-    dave_resp = dave_client.fetch("plans","dinner")
-    
-    # Now when Ben sends his change to Dave, he includes both the vector clock he pulled down 
-    # (in the X-Riak-Vclock header), and his own X-Riak-Client-Id:
-    ben_resp = ben_client.store("plans","dinner","Tuesday",ben_resp.headers_hash['X-Riak-Vclock'])
-    # Dave pulls down a fresh copy, and then confirms Tuesday:
-    dave_resp = dave_client.fetch("plans","dinner")
-    dave_resp = dave_client.store("plans","dinner","Tuesday",dave_resp.headers_hash['X-Riak-Vclock'])
-    # Kathy, on the other hand, hasn't pulled down a new version, and instead merely updated 
-    # the plans with her suggestion of Thursday:
-    kathy_client.store("plans","dinner","Thursday",kathy_resp.headers_hash['X-Riak-Vclock'])
-    
-    # Now, when Dave goes to grab this new copy (after Cathy tells him she has posted it), he'll 
-    # see one of two things. If the "plans" Riak bucket has the allow_mult property set to false, 
-    # he'll see just Cathy's update. If allow_mult is true for the "plans" bucket, he'll see both 
-    # his last update and Cathy's. I'm going to show the allow_mult=true version below, because I 
-    # think it illustrates the flow better.
-    dave_resp = dave_client.fetch("plans","dinner")
-    
-    assert dave_resp.body =~ /^Siblings/
-    siblings = dave_resp.body.split("\n")[1..-1]
-    # puts siblings.inspect
-    # puts dave_resp.code
-    
-    sib1 = dave_client.fetch("plans","dinner",:vtag => siblings[0])
-    # puts sib1.body
   end
 end
