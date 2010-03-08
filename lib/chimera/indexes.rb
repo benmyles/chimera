@@ -22,14 +22,20 @@ module Chimera
       def find_with_index(name, opts_or_query=nil)
         if opts_or_query.is_a?(Hash)
           q = opts_or_query[:q].to_s
+          offset = opts_or_query[:offset] || 0
+          limit = opts_or_query[:limit] || -1
         else
           q = opts_or_query.to_s
+          offset = 0
+          limit = -1
         end
         if name.to_sym == :all
           llen  = self.connection(:redis).llen(self.key_for_all_index)
-          curr  = 0
-          while(curr < llen)
-            keys = self.connection(:redis).lrange(self.key_for_all_index, curr, curr+9).compact
+          limit = llen if limit > llen
+          curr  = offset
+          while(curr < limit)
+            max_index = [curr+9,limit-1].min
+            keys = self.connection(:redis).lrange(self.key_for_all_index, curr, max_index).compact
             find_many(keys).each { |obj| yield(obj) }
             curr += 10
           end
