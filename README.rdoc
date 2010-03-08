@@ -25,6 +25,7 @@ way with one Redis server (especially if you use the new Redis VM).
   uses set intersection so you can get an AND/OR search).
 * Supports a geospatial index type for simple storage and lookup of coordinates.
 * Uses Typhoeus for communicating with Riak.
+* Surfaces siblings from Riak so that conflicts can be managed and resolved.
 
 == ISSUES/NOTES:
 

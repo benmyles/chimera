@@ -1,4 +1,8 @@
+=== 0.0.4 2010-03-07
+
+* Added support for siblings in riak so that conflicts can be managed.
+  See tests for example and http://blog.basho.com/2010/01/29/why-vector-clocks-are-easy/.
+
 === 0.0.1 2010-03-01
 
-* 1 major enhancement:
-  * Initial release
+* Initial release
