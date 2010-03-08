@@ -1,7 +1,18 @@
+== CHIMERA ISSUES/NOTES:
 
-For more information on chimera, see http://chimera.rubyforge.org
+* Experimental. Not yet tested in production environment, use at your own risk.
+* Only tested with Ruby 1.9. Why not upgrade?
+* Test coverage needs to be improved.
+* Documentation is lacking. At the moment reading the tests and sample test/models.rb
+  file are your best bet.
 
-NOTE: Change this information in PostInstall.txt 
-You can also delete it if you don't want it.
+== USEFUL LINKS:
+
+* Source: http://github.com/benmyles/chimera
+* Docs: http://github.com/benmyles/chimera#readme
+* Wiki: http://wiki.github.com/benmyles/chimera/
+* Discussion: http://groups.google.com/group/chimera-lib
+* Email: ben dot myles at gmail dot com
+* Twitter: benmyles
 
 
