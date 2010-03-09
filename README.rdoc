@@ -74,6 +74,10 @@ way with one Redis server (especially if you use the new Redis VM).
   Car.find_with_index(:description, :q => "rigid boat", :type => :intersect)
   => []
 
+You can also paginate results by specifying the left index and right index of the result set:
+
+  Car.find_with_index(:description, :q => "rigid boat", :type => :intersect, :lindex => 10, :rindex => 20)
+
 * See tests for more usage examples
 
 == REQUIREMENTS:
