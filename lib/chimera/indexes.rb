@@ -37,7 +37,7 @@ module Chimera
           while(curr < limit)
             max_index = [curr+9,limit-1].min
             keys = self.connection(:redis).lrange(self.key_for_all_index, curr, max_index).compact
-            find_many(keys).each { |obj| yield(obj) }
+            self.find_many(keys).each { |obj| yield(obj) }
             curr += 10
           end
         elsif props = self.defined_indexes[name.to_sym]

@@ -14,6 +14,7 @@ require 'uuidtools'
 require 'yajl'
 require 'yaml'
 require 'active_model'
+require 'active_support/all'
 
 require 'redis'
 require 'typhoeus'
