@@ -83,7 +83,7 @@ You can also paginate results by specifying the left index and right index of th
 == REQUIREMENTS:
 
 * Latest Riak from bitbucket: http://hg.basho.com/riak/wiki/Home
-* Latest Redis from Git: git://github.com/pietern/redis.git
+* Latest Redis from Git: http://github.com/antirez/redis
 
 * Ruby 1.9
 
