@@ -78,8 +78,8 @@ way with one Redis server (especially if you use the new Redis VM).
 
 == REQUIREMENTS:
 
-* Riak Server
-* Redis Server
+* Latest Riak from bitbucket: http://hg.basho.com/riak/wiki/Home
+* Latest Redis from Git: git://github.com/pietern/redis.git
 
 * Ruby 1.9
 
