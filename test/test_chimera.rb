@@ -68,6 +68,10 @@ class TestChimera < Test::Unit::TestCase
     assert c3.save
     
     assert_equal [c,c2,c3].sort, Car.find_with_index(:comments, "dog").sort
+    
+    assert_equal [c,c2].sort, Car.find_with_index(:comments, {:q => "dog", :type => :intersect, :lindex => 0, :rindex => 1}).sort
+    assert_equal [c,c2].sort, Car.find_with_index(:comments, {:q => "dog chicken cat", :lindex => 0, :rindex => 1}).sort
+    
     assert_equal [c,c2].sort, Car.find_with_index(:comments, "cat").sort
     assert_equal [c,c2].sort, Car.find_with_index(:comments, "cat").sort
   
@@ -295,5 +299,18 @@ class TestChimera < Test::Unit::TestCase
     assert_equal 25, u.cars.all(0,25).size
     assert_equal 7, u.cars.all(10,17).size
     assert_equal 1, u.cars.all(0,1).size
+  end
+  
+  def test_zinter
+    redis = User.connection(:redis)
+    redis.zadd("zset0",0,"key0")
+    redis.zadd("zset0",1,"key1")
+    redis.zadd("zset0",2,"key2")
+
+    redis.zadd("zset1",0,"key2")
+    redis.zadd("zset1",5,"key5")
+    
+    redis.zinter("zset3","2","zset0","zset1")
+    assert_equal ["key2"], redis.zrange("zset3","0","-1")
   end
 end
