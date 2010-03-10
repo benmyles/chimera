@@ -1,18 +1,8 @@
-== CHIMERA ISSUES/NOTES:
+Documentation on Chimera is available at:
+  http://wiki.github.com/benmyles/chimera/
 
-* Experimental. Not yet tested in production environment, use at your own risk.
-* Only tested with Ruby 1.9. Why not upgrade?
-* Test coverage needs to be improved.
-* Documentation is lacking. At the moment reading the tests and sample test/models.rb
-  file are your best bet.
-
-== USEFUL LINKS:
-
-* Source: http://github.com/benmyles/chimera
-* Docs: http://github.com/benmyles/chimera#readme
-* Wiki: http://wiki.github.com/benmyles/chimera/
-* Discussion: http://groups.google.com/group/chimera-lib
-* Email: ben dot myles at gmail dot com
-* Twitter: benmyles
+Note that Chimera is experimental and in early stages of development. Although it
+has a fairly rich feature set it is not yet production tested, and could use a
+more comprehensive test suite.
 
 
