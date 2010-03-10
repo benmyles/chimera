@@ -1,106 +1,14 @@
-= chimera
+= Chimera
 
-* http://github.com/benmyles/chimera
+* http://wiki.github.com/benmyles/chimera/
 
 == DESCRIPTION:
 
-Chimera is an object mapper for Riak and Redis. The idea is to mix the advantages of Riak
-(scalability, massive data storage) with Redis (atomicity, performance, data structures).
-You should store the bulk of your data in Riak, and then use Redis data structures where
-appropriate (for example, a counter or set of keys).
+Chimera is an object mapper for Ruby that uses both Redis and Riak. Redis is an extremely fast key-value store with support for several data types including lists and sets that make it ideal for storing meta-data such as indexes and associations. Riak is a decentralized document store with automatic horizontal scaling based on Amazon’s Dynamo and is ideal for storing huge amounts of data across many machines. Chimera combines Redis and Riak to give you the best of both worlds.
 
-Internally, Chimera uses Redis for any indexes you define as well as some default indexes
-that are automatically created. There's no built in sharding for Redis, but since it's
-only being used for key storage and basic data elements you should be able to go a long
-way with one Redis server (especially if you use the new Redis VM).
-
-!! Chimera is alpha. It's not production tested and needs a better test suite. !!
-!! It's also only tested in Ruby 1.9. !!
-
-== FEATURES:
-
-* Uses Riak (http://riak.basho.com/) for your primary storage.
-* Uses Redis for indexes and also allows you to define Redis objects on a model.
-* Supports unique and non-unique indexes, as well as basic search indexes (words are stemmed,
-  uses set intersection so you can get an AND/OR search).
-* Supports a geospatial index type for simple storage and lookup of coordinates.
-* Uses Typhoeus for communicating with Riak.
-* Surfaces siblings from Riak so that conflicts can be managed and resolved.
-
-== ISSUES/NOTES:
-
-* Experimental. Not yet tested in production environment, use at your own risk.
-* Only tested with Ruby 1.9. Why not upgrade?
-* Test coverage needs to be improved.
-* Documentation is lacking. At the moment reading the tests and sample test/models.rb
-  file are your best bet.
-
-== SYNOPSIS:
-
-  require "rubygems"
-  require "chimera"
-
-  Chimera.config_path = "path/to/your/config.yml"
-
-  class Car < Chimera::Base
-    attribute :vin
-    attribute :make
-    attribute :model
-    attribute :year
-    attribute :description
-
-    index :year, :type => :find
-    index :description, :type => :search
-    index :vin, :type => :unique
-
-    validates_presence_of :vin, :make, :model, :year
-  end
-
-  c = Car.new
-  c.id = Car.new_uuid
-  c.vin = 12345
-  c.make = "Pagani"
-  c.model = "Zonda Cinque Roadster"
-  c.year = 2010
-  c.description = "The Roadster will have specs as the Cinque Coupé, and will likely maintain the same rigidity or more, as it was for the Roadster F and F Coupé."
-  c.save
-
-  Car.find_with_index(:year, 2010)
-  => [c]
-
-  Car.find_with_index(:description, :q => "rigid boat", :type => :union)
-  => [c]
-
-  Car.find_with_index(:description, :q => "rigid boat", :type => :intersect)
-  => []
-
-You can also paginate results by specifying the left index and right index of the result set:
-
-  Car.find_with_index(:description, :q => "rigid boat", :type => :intersect, :lindex => 10, :rindex => 20)
-
-* See tests for more usage examples
-
-== REQUIREMENTS:
-
-* Latest Riak from bitbucket: http://hg.basho.com/riak/wiki/Home
-* Latest Redis from Git: http://github.com/antirez/redis
-
-* Ruby 1.9
-
-* ActiveSupport+ActiveModel 3.0.0.beta
-
-* uuidtools 2.1.1
-* yajl-ruby 0.7.4
-* fast-stemmer 1.0.0
-
-== INSTALL:
-
-  $ gem install tzinfo builder memcache-client rack rack-test rack-mount erubis mail text-format thor bundler i18n
-  $ gem install rails --pre
-  $ gem install chimera
-  
 == USEFUL LINKS:
 
+* Documentation: http://wiki.github.com/benmyles/chimera/
 * Discussion: http://groups.google.com/group/chimera-lib
 * Email: ben dot myles at gmail dot com
 * Twitter: benmyles
